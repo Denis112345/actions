@@ -9,15 +9,16 @@ on:
       deploy_env:
         required: true
         type: string
+    # Явно объявляем ожидаемые секреты
     secrets:
       DEV_SSH_HOST:
-        required: false
+        required: true
       DEV_SSH_USER:
-        required: false
+        required: true
       DEV_SSH_KEY:
-        required: false
+        required: true
       DEV_SSH_PORT:
-        required: false
+        required: true
 
 jobs:
   deploy:
