@@ -10,14 +10,14 @@ on:
         required: true
         type: string
     secrets:
-      SSH_HOST:
-        required: true
-      SSH_USER:
-        required: true
-      SSH_KEY:
-        required: true
-      SSH_PORT:
-        required: true
+      DEV_SSH_HOST:
+        required: false
+      DEV_SSH_USER:
+        required: false
+      DEV_SSH_KEY:
+        required: false
+      DEV_SSH_PORT:
+        required: false
 
 jobs:
   deploy:
