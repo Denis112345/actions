@@ -36,8 +36,10 @@ jobs:
           port: ${{ secrets.DEV_SSH_PORT }}
           script: |
             cd ~/erp_k8s/erp_k8s && \
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && \
             
-            if env "APP=${{ inputs.app_name }}" "BRANCH=${{ github.ref_name }}" "MODE=prod" bun utils.ts switch-branch; then
+            # Добавляем sudo для работы с k3s.yaml и kubectl внутри скрипта
+            if sudo env "KUBECONFIG=$KUBECONFIG" "APP=${{ inputs.app_name }}" "BRANCH=${{ github.ref_name }}" "MODE=prod" bun utils.ts switch-branch; then
               STATUS="Success"
             else
               STATUS="Failed"
