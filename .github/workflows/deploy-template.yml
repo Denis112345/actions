@@ -55,7 +55,7 @@ jobs:
             cd ~/sp-kuber/configs && \
             export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && \
             
-            if env "APP=${{ inputs.app_name }}" "BRANCH=${{ github.ref_name }}" "MODE=prod" bun utils.ts switch-branch; then
+            if env "APP=${{ inputs.app_name }}" "BRANCH=${{ github.ref_name }}" "MODE=${{ inputs.deploy_env }}" bun utils.ts switch-branch; then
               STATUS="Success"
             else
               STATUS="Failed"
