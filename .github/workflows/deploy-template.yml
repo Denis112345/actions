@@ -19,6 +19,8 @@ on:
         required: true
       DEV_SSH_PORT:
         required: true
+      ALLOW_REPOS:
+        required: true
 
 jobs:
   check-repo:
