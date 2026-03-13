@@ -21,8 +21,23 @@ on:
         required: true
 
 jobs:
+  check-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if repo is allowed
+        run: |
+          ALLOWED_REPOS="${{ secrets.ALLOW_REPOS }}"
+          CURRENT_REPO="${{ github.event.repository.name }}"
+          
+          if [[ ",$ALLOWED_REPOS," == *",$CURRENT_REPO,"* ]]; then
+            echo "Access granted"
+          else
+            echo "Access denied"
+            exit 1
+          fi
   deploy:
     runs-on: ubuntu-22.04
+    needs: check-repo
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,4 +50,24 @@ jobs:
           key: ${{ secrets.DEV_SSH_KEY }}
           port: ${{ secrets.DEV_SSH_PORT }}
           script: |
-            echo "Hello, World!"
+            cd ~/sp-kuber/configs && \
+            export KUBECONFIG=/etc/rancher/k3s/k3s.yaml && \
+            
+            if env "APP=${{ inputs.app_name }}" "BRANCH=${{ github.ref_name }}" "MODE=prod" bun utils.ts switch-branch; then
+              STATUS="Success"
+            else
+              STATUS="Failed"
+            fi
+
+            END_TIME=$(date +'%H:%M:%S')
+
+            curl -X POST http://localhost:30012/notify \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"service\": \"${{ inputs.app_name }}\",
+                \"status\": \"$STATUS\",
+                \"branch\": \"${{ github.ref_name }}\",
+                \"time\": \"$END_TIME\",
+                \"env\": \"${{ inputs.deploy_env }}\",
+                \"actionUrl\": \"https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"
+              }"
