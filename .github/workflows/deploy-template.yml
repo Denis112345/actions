@@ -22,7 +22,7 @@ on:
 
 jobs:
   check-repo:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Check if repo is allowed
         run: |
@@ -36,7 +36,7 @@ jobs:
             exit 1
           fi
   deploy:
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     needs: check-repo
     steps:
       - name: Checkout code
